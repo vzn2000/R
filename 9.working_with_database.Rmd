@@ -1,0 +1,130 @@
+---
+title: "work_with_databases"
+author: "Vedat Ozkan"
+date: "12/21/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# 1. Working with Datases
+
+```{r}
+
+library(dplyr)
+library(dbplyr)
+library(ggplot2)
+
+
+```
+
+## 1.1a. Connect MySQL Server
+
+```{r}
+
+library(DBI)
+
+con<- DBI::dbConnect(RMySQL::MySQL(),
+                     host = "localhost",
+                     user = "root",
+                     password = "modernr",
+                     dbname = "testdb")
+
+```
+
+
+## 1.1b. Connect SQL Server
+
+```{r}
+
+library(odbc)
+
+con <- dbConnect(odbc(),
+                 Driver = "SQLServer",
+                 Server = "CARETTACARETTA\SQLEXPRESS",
+                 Database = "AdventureWorks2016",
+                 UID = "myuser",
+                 PWD = rstudioapi::askForPassword("Database password")
+                 Port = 1433
+                 )
+```
+
+
+How to copy data into database through R
+
+```{r}
+
+mpg
+
+
+copy_to(con, mpg, "mpg", temporary = FALSE)
+
+```
+
+
+
+## 1.2. Query Database with SQL
+
+```{r}
+
+dbGetQuery(con, "select * from mpg limit 10")
+
+
+```
+
+
+or
+
+```{r}
+
+sql<- sprintf("select * from mpg")
+
+dbGetQuery(con, sql)
+
+```
+
+
+How to query DB with complex SQL
+
+```{sql connection=con}
+
+-- Now, here is SQL environement! we can type complex SQL queries here
+
+```
+
+
+
+## 1.3. Query Database with dplyr 
+
+```{r}
+
+mpg_db<- tbl(con, "mpg")
+
+
+mpg_db %>%
+  select(model, year)
+
+
+#---- an other example ----
+
+mpg_db %>%
+  group_by(model) %>%
+  summarise(avg = mean(displ))
+
+
+```
+
+
+
+## 1.4 Convert script to SQL from dplyr
+
+```{r}
+
+mpg_db %>%
+  group_by(model) %>%
+  summarise( avg = mean(displ)) %>%
+  show_query()
+
+# We will see the out as SQL query displaying before show_query()
+```
+

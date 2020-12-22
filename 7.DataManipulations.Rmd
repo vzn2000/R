@@ -1,0 +1,435 @@
+---
+title: "7.Data Manipulation"
+author: "Vedat Ozkan"
+date: "December 3, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+select()   : variable selection
+filter()   : observation selection
+mutate()   : varibale creation
+summarise(): summary statistics
+group_by() : grouping
+left_join(): join operration
+summarise(): data summary
+
+
+# 0. Data Set
+
+nycflights13: flight data of NYC in 2013
+
+https://www.transtats.bts.gov/DatabaseInfo.asp?DB_ID=120&Link=0
+
+Understanding dataset
+
+```{r}
+
+library(dplyr)
+library(nycflights13)
+
+df<- flights
+
+dim(df)
+
+head(df)
+
+df
+
+str(df)
+
+summary(df)
+
+```
+
+
+```{r}
+# Let's find the number of flight and average delay time by carrier (flight companies). Ignore less than 10 minutes
+
+df %>% 
+  select(dep_delay, day, carrier) %>%
+  filter(dep_delay > 10) %>%
+  group_by(carrier) %>%
+  summarise(n = n(),avg = mean(dep_delay) )
+
+```
+
+
+# 1. Variable Selection Operations: select()
+
+select()
+```{r}
+
+# in order to select
+
+select(df, carrier, flight, tailnum)
+
+select(df, carrier, origin:hour)
+
+select(df, origin:hour)
+
+select(df, 1:3)
+
+# in order to remove
+
+select(df, -carrier)
+
+select(df, -c(carrier, tailnum))
+
+select(df, -c(origin:hour))
+
+
+```
+
+
+## contains()
+
+```{r}
+
+select(df, contains("time"))
+
+
+```
+
+
+## starts_with()
+
+```{r}
+
+select(df, starts_with("dep"))
+
+```
+
+
+## ends_with()
+
+```{r}
+
+select(df, ends_with("delay"))
+
+```
+
+
+
+## num_range()
+
+```{r}
+
+m<- matrix(1:25, 5,5)
+
+colnames(m)<- paste("x",1:5, sep = "")
+
+#IMPORTANT: First argument of Dplyr's functions has to be Dataframe !!
+
+select(data.frame(m), num_range("x",2:4))
+
+```
+
+
+Also, sub-functions of select can be used in a combo way
+
+```{r}
+
+select(df,carrier, tailnum, contains("time"))
+
+
+```
+
+
+
+# 2.Observation Operations: filter()
+
+filter()
+```{r}
+
+filter(df, year == 2013 & month == 2)
+
+filter(df, month ==2 & day ==18 )
+
+filter(df,dep_delay > 1000)
+
+filter(df, dep_delay > mean(df$dep_delay, na.rm = TRUE))
+
+filter(df, dep_delay > mean(df$dep_delay, na.rm = TRUE) + sd(df$dep_delay, na.rm = TRUE) )
+
+```
+
+
+## arrange()
+
+```{r}
+
+
+a<- select(df, dep_delay, month, day)
+
+arrange(a, dep_delay, month, day) # ascending sort
+
+#-----
+
+arrange(a, desc(dep_delay), month, day) # descending sort
+
+```
+
+
+```{r}
+
+df %>%
+  filter(month == 2, day == 18) %>%
+  select(dep_delay, month) %>%
+  arrange(desc(dep_delay), month)
+
+```
+
+
+
+## sample_frac() 
+
+This is for sample choosing randomly by ratio
+```{r}
+
+df %>% sample_frac(0.05)
+
+```
+
+
+## sample_n 
+
+This is for sample choosing randomly by number
+```{r}
+
+df %>% sample_n(100)
+
+```
+
+
+
+## slice()
+
+```{r}
+
+df %>% slice(50:100)
+
+```
+
+
+
+## top_n()
+
+```{r}
+
+df %>% top_n(10)
+
+```
+
+
+
+# 3. Variable Transformation: mutate()
+
+mutate()
+```{r}
+
+# Suppose we want to search the flights depart delayed, but arrive earlier, also speed
+
+sample<- df %>%
+            sample_n(1000) %>%
+            select(arr_delay, dep_delay, distance, arr_time)
+
+
+mutate(sample,
+       difference = arr_delay - dep_delay,
+       speed = distance / arr_time * 60,
+       new = difference / speed)
+
+
+```
+
+
+
+## rename()
+
+```{r}
+# in order to rename variables
+
+rename(df, 
+       arrival_delay = arr_delay,
+       departure_delay = departure_delay
+       )
+
+
+```
+
+
+
+## transmute()
+
+```{r}
+
+# It provides to add new variables whereas current variables remove
+
+transmute(sample,
+       difference = arr_delay - dep_delay,
+       speed = distance / arr_time * 60,
+       new = difference / speed)
+
+
+```
+
+
+
+# 4. Grouping: group_by()
+
+```{r}
+
+# summarise() is used with group_by together
+
+df %>%
+  group_by(carrier) %>%
+  summarise(num = n(),
+            avg = mean(dep_delay, na.rm = TRUE),
+            med = median(dep_delay, na.rm = TRUE),
+            std = sd(dep_delay, na.rm = TRUE),
+            var = var(dep_delay, na.rm = TRUE),
+            avg_distance = mean(distance)
+            )
+
+```
+
+
+
+# 5. Data Summary : summarise()
+
+
+## counts
+
+## mean(), median(), sum(), sd(), var()
+
+## first(), last(), nth()
+
+## quantile(), min(), max()
+
+
+
+
+# 6. Join Operations
+
+
+## inner_join()
+
+## left_join()
+
+## right_join()
+
+## full_join
+
+
+
+# 7. Tidy Data
+
+```{r}
+
+library(tidyverse)
+
+table1
+
+table2
+
+table3
+
+table4a
+
+table4b
+
+table5
+
+```
+
+
+
+## gathering and spreading
+
+
+
+## gathering
+
+
+```{r}
+
+table4a %>% 
+  gather('1999',"2000", key = "year", value = 'cases')
+
+
+```
+
+
+```{r}
+
+table4b %>%
+  gather("1999","2000", key = "year", value = "population")
+
+```
+
+
+```{r}
+
+# Let's merge table4a with table4b
+
+tidy_a<- table4a %>% 
+  gather('1999',"2000", key = "year", value = 'cases')
+
+
+tidy_b<- table4b %>%
+  gather("1999","2000", key = "year", value = "population")
+
+
+left_join(tidy_a, tidy_b)
+
+
+```
+
+
+
+## spreading 
+
+spread() is opposite of gather()
+
+```{r}
+
+table2
+
+spread(table2, key = "type", value = "count")
+
+```
+
+
+
+
+## separating and uniting
+
+
+## separate()
+
+```{r}
+
+table3 %>%
+  separate(rate, into = c("cases","population"), sep ="/", convert = TRUE)
+
+
+```
+
+
+
+## unite()
+
+```{r}
+
+table5 %>%
+  unite(new, century, year, sep = "")
+
+```
+
+
+
+
+

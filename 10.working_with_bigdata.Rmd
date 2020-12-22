@@ -1,0 +1,94 @@
+---
+title: "working_with_bigdata (spark)"
+author: "Vedat Ozkan"
+date: "12/21/2020"
+output: html_document
+editor_options: 
+chunk_output_type: console
+---
+
+
+# 1. Installation for Spark
+
+```{r}
+
+install.packages("sparklyr")
+install.packages("nycflights13")
+
+library(sparklyr)
+library(dplyr)
+library(nycflights13)
+
+```
+
+
+# 2. Connection to Spark
+
+```{r}
+
+sc<- spark_connect(master = "local")
+
+# We will migrate the data in R to Spark below
+
+copy_to(sc, nycflights13::flights, "flights_spark")
+
+```
+
+
+We can no longer use regular R codes like str() or summary() since data is now stored in Spark.
+
+In order to see data
+
+```{r}
+
+src_tbls(sc)
+
+```
+
+
+
+# 3. Use dplyr in Spark
+
+```{r}
+
+# We can use dplyr to manipulate data in Spark as well.
+
+f_tbl<- copy_to(sc, nycflights13::flights, "flights_spark", overwrite = TRUE)
+
+f_tbl %>%
+  group_by(carrier) %>%
+  summarise(n = n(), avg = mean(dep_delay))
+
+```
+
+
+# 4. Big Data Visualization in R
+
+```{r}
+
+# collect() : provides to pull data into local computer after aggregating
+
+g<- f_tbl %>%
+      group_by(carrier) %>%
+      summarise(n = n(), avg = mean(dep_delay)) %>%
+      collect()
+
+# Visualization is not different in Big Data
+
+library(ggplot2)
+
+ggplot(g, aes(carrier, avg))+
+  geom_bar(stat = "identity",
+           color = "black",
+           fill = "orange"
+           )
+
+```
+
+
+
+
+
+
+
+

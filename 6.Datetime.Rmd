@@ -1,0 +1,226 @@
+---
+title: "Datetime"
+author: "Vedat Ozkan"
+date: "December 15, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+
+```{r}
+
+library(lubridate)
+
+today()
+
+now()
+
+
+```
+
+
+# 1. Tackle Datetime Varibales
+
+
+## 1.1. Tackle Datetime vars reading with Editor
+
+```{r}
+
+df_one<- data.frame(
+  
+  age    = c(10,11,30),
+  height = c(120, 140, 160),
+  dob    = c("20100201","20110522","20090430")
+)
+
+
+df_two<- data.frame(
+  
+  age    = c(10,11,30),
+  height = c(120, 140, 160),
+  dob    = c("2010_02_01","2011_05_22","2009_04_30")
+)
+
+
+df_three<- data.frame(
+  
+  age    = c(10,11,30),
+  height = c(120, 140, 160),
+  dob    = c("02012010","05222011","04302009")
+)
+
+
+df<- data.frame(df_one, df_two, df_three)
+
+library(readr)
+
+write_csv(df, "df.csv")
+
+```
+
+
+## 1.2. Creat Datetimr from Strings
+
+```{r}
+
+library(lubridate)
+
+tarih <- "20180218"
+
+# ymd()
+ymd(tarih)
+
+# --------
+
+df<- data.frame(df_one, df_two, df_three)
+
+str(df)
+
+df$dob<- ymd(df$dob)
+df
+
+# mdy()
+
+mdy("02242018")
+
+
+# ymd()
+
+ymd("20180218")
+
+mdy("02_18_2018")
+
+mdy("February 18st, 2018")
+
+ymd_hm("20120101 16:10")
+
+ymd_hms("20120101 16:00:00")
+```
+
+
+
+## 1.3.Create a new variable from the others
+
+```{r}
+
+
+install.packages("nycflights13")
+
+library(nycflights13)
+
+flights
+
+
+library(dplyr)
+
+
+flights %>% select(year, month, day, hour, minute)
+
+
+flights %>% 
+  select(year, month, day) %>% 
+  mutate(tarih = make_date(year, month, day))
+
+ #not: select(), mutate() functions from dyplyr library
+
+flights %>% 
+  select(year, month, day, hour, minute) %>% 
+  mutate(tarih = make_datetime(year, month, day))
+
+
+```
+
+
+
+# 2. Datetime Components
+
+```{r}
+
+t_s<- ymd_hms("20100722 13:45:00")
+
+
+year(t_s)
+
+month(t_s)
+
+day(t_s)
+
+hour(t_s)
+
+min(t_s)
+
+
+mday(t_s) # day of month
+
+yday (t_s) # day of year
+
+wday(t_s) # week of day
+
+
+```
+
+
+
+# 3. Time spans
+
+
+## Conversion to second
+
+```{r}
+
+as.duration(1)
+
+dseconds(16)
+
+dminutes(1)
+
+dhours(10)
+
+ddays(1)
+
+dweeks(1)
+
+dyears(4)
+
+```
+
+
+
+## Daily Use of Datetime
+
+```{r}
+
+seconds(15)
+
+minutes(10)
+
+hours(45)
+
+
+days(7)
+
+months(1:6)
+
+weeks(1)
+
+
+years(1)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+# 3. Time Spans

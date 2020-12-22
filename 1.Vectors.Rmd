@@ -1,0 +1,249 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# 1. What is vector?
+
+-Vectors are 2 types: atomic, list.
+
+-Every vectors has 2 features: typeof, length
+
+-There are 4 increased vectors: Factors, datetime, dataframe, tibbles
+
+## Important Atomic Vectors
+
+```{r}
+
+c(TRUE, FALSE, NA)
+
+# Integer & Numeric
+
+a<- 1
+
+b<- 1L
+
+# Characters
+
+c<- "John"
+
+```
+
+
+# 2. Vector Formating
+
+## Creating Vectors
+
+```{r}
+
+a<- c(1,2,3,4)
+
+b<- c("a","b","c")
+
+c<- 1:10
+
+d<- 1
+
+```
+
+## Combining Vectors
+
+```{r}
+
+v<- 1:10
+
+y<- 2:11
+
+v+y
+
+z<- 1:5
+
+v+z
+
+c(v,y)
+
+c(v,z)
+
+c(v,y,z)
+
+rbind (v,y) # r stands for row
+
+cbind (v,y) # c stands for column
+
+```
+
+## Vector Naming
+
+```{r}
+
+n<- c(x = 1, y = 2, z = 3)
+
+n
+```
+
+## Vector Types and Converting
+
+### Vector Types
+
+```{r}
+
+is.logical(a)
+is.integer(a)
+is.double(a)
+is.numeric()
+is.character()
+is.atomic()
+is.list()
+is.vector()
+
+
+```
+
+### Converting Vector Types
+
+```{r}
+
+tf<- c("T", "F")
+
+tf<- as.logical(tf)
+
+p<- 1
+
+typeof(p)
+
+p<- as.character(p)
+
+typeof(p)
+
+p
+
+r<- c(1,2,"a")
+r<- as.character(r)
+r
+
+s<- c(10,10,10,20,20,30,40,50,50,50)
+s<- factor(s)
+s
+# Let's convert s back to vector again!
+
+as.numeric(as.character(s))
+```
+
+
+# 3. Vector Element Operations
+
+## Vector Index and Element selection
+
+```{r}
+
+vektor<- rnorm(30) # it generates 30 numbers by normal distribution btw -3 and 3
+
+vektor[1]
+vektor[c(2,3,4)]
+vektor[5:15]
+
+```
+
+## Assign Value using Index
+
+```{r}
+
+vektor[1]<- 1
+vektor[1]
+```
+
+## Assign Collective Value
+
+```{r}
+
+vektor[c(2,3,4)]<- c(3,5,7)
+vektor[c(2,3,4)]
+
+vektor[5:10]<- 0
+vektor[5:10]
+
+
+
+```
+
+##Record Selection from Named Vector
+
+```{r}
+
+vv<- c(x=1, y=2, z=3)
+
+vv["x"]
+vv[c("x","z")]
+
+```
+
+## Conditional Record Selection
+
+```{r}
+
+vektor
+vektor[vektor>=0]
+
+vektor[vektor>0 & vektor<1]
+
+```
+
+## Erasing Records of Vector
+
+```{r}
+
+yy<- 1:10
+
+yy<- NULL
+
+# The other method is to slice
+
+yy<- 1:10
+
+yy<-yy[2:6]
+yy
+
+```
+
+
+# 4. Vectoral Calculations
+
+## Mathematical Operations
+
+```{r}
+
+v<- 1:10
+
+y<- 2:11
+
+v+y
+
+v-y
+
+v*y
+
+v/y
+
+sqrt(v)
+sum(v)
+mean(v)
+median(v)
+
+
+v^2
+
+```
+
+## Statistical Operations
+
+```{r}
+
+min(v)
+max(v)
+mean(v)
+median(v)
+cumsum(v)
+
+
+```
+

@@ -1,0 +1,333 @@
+---
+title: "2.Matrix"
+author: "Vedat Ozkan"
+date: "November 30, 2020"
+output: html_document
+---
+
+# 1. What is Matrix?
+
+# 2. Matrix Formating
+
+## Creating Matrix
+
+```{r}
+
+v1<- c(3,4,6,8,5)
+v2<- c(4,8,4,7,1)
+v3<- c(2,2,5,4,6)
+v4<- c(4,7,5,2,5)
+
+cbind(v1,v2,v3,v4)
+
+matrix(1:4, nrow=2, ncol=2)
+
+matrix(1:9, nrow=3, ncol=3) # this order by columns.
+
+# What about by row?
+
+matrix(1:9, nrow=3, ncol=3, byrow = TRUE)
+
+# How to add manual value in Matrix
+
+matrix(c(1,2,3,11,22,33,45,98,43), nrow=3, ncol=3)
+
+```
+
+## Matrix Dimensions and Frequency Table
+
+```{r}
+# Dimension
+
+m<- matrix(c(1,2,3,11,22,33,45,98,43), nrow=3, ncol=3)
+
+dim(m)
+
+# Frequency
+
+m1<- matrix(rep(1:3,3),3,3)
+
+table(m1)
+
+```
+
+## Matrix Combining
+
+```{r}
+
+MA<- rnorm(16)
+
+MA<- matrix(MA, 4,4)
+
+
+MB<- rnorm(16, 90, 10) # 90 for average, 10 for standard deviation
+MB<- matrix(MB, 4,4)
+
+rbind(MA,MB)
+
+rbind(MA,MB)
+
+# How to access selected values in Matrix
+
+MA[1:2, 1:2]
+
+MB[3:4, 3:4]
+
+cbind(MA[1:2, 1:2], MB[3:4, 3:4])
+
+```
+
+## Matrix Naming
+
+```{r}
+
+v1<- c(3,4,6,8,5)
+v2<- c(4,8,4,7,1)
+v3<- c(2,2,5,4,6)
+v4<- c(4,7,5,2,5)
+
+v<- cbind(v1,v2,v3,v4)
+
+colnames(v)<- c("one","two","tree","four")
+
+rownames(v)<- c("one","two","tree","four","five")
+
+v
+
+# What about if we have too many rows to give name?
+
+big_m<- matrix(1:10000, nrow=500, ncol=5)
+
+paste("personnel", 1:5, sep = ".") # This is to understand how to create title. Example of big_m is below
+
+rownames(big_m)<- c(paste("customer_id", 1:500, sep ="_"))
+
+```
+
+# 3 Matrix Element Operations
+
+## Matrix Index and Record Selection
+
+```{r}
+
+M<- matrix(c(1,2,11,22,111,222,1111,2222), nrow=4, ncol=2, byrow=TRUE)
+
+colnames(M)<- c("one","two")
+rownames(M)<- c("one","two","three","four")
+M
+
+#How to select element
+
+print("How to select element")
+
+M[1,1]
+M[3,1]
+M[2,2]
+
+#How to select row
+
+print("How to select row")
+
+M[1,]
+M[1:2,]
+M[c(1,4),]
+M[4, ]
+
+# How to select column
+
+print("How to select column")
+
+M[ ,1]
+M[ ,1:2]
+
+# ------
+
+m<- matrix(rnorm(25), 10,10)
+
+m[1:5,5:7]
+
+colnames(m)<- c(paste("col", 1:10, sep="_"))
+rownames(m)<- c(paste("row", 1:10, sep="_"))
+
+m
+
+m[,"col_7"]
+m["row_7",]
+
+# -------
+
+m<- matrix(1:10000, 500,10)
+
+colnames(m)<- c(paste("var",1:10,sep="_"))
+
+m
+
+# Ex: How to assign every column's its own sqrt of average 
+
+m[ ,"var_1"]
+mean(m[ ,"var_1"])
+sqrt(mean(m[ ,"var_1"]))
+sqrt(mean(m[ ,"var_1"]))
+
+as.character(round(sqrt(mean(m[ ,"var_1"]))))
+
+colnames(m)[1]<- as.character(round(sqrt(mean(m[ ,"var_1"]))))
+head(m)
+
+# apply(array, margin, ...) function to assign to the all easily
+
+colnames(m)<- as.character(round(sqrt(apply(m, 2, mean))))
+
+
+```
+
+## Conditional Element Selection
+
+```{r}
+
+m<- matrix(1:25,5)
+
+m
+
+print("------")
+
+m[ ,1]>2
+
+print("------")
+
+m[m[ ,1]>2, ]
+
+print("Let's query the greater values than average for first column")
+
+m[m[, 1] > mean(m[ ,1]), 1]
+
+print("Let's query 2nd column whose values the less than average of 4th col")
+
+m[ m[ ,2] < mean(m[ ,4]), 2]
+
+```
+
+# 4. Matrix Calculation
+
+## Mathematical Operations
+
+```{r}
+
+A<- matrix(1:9, 3,3)
+
+B<- matrix(1:9, 3,3)
+
+print("--------------")
+
+A+B
+
+print("--------------")
+
+A/B
+
+print("--------------")
+
+A*8
+
+print("--------------")
+
+A[1,2]+B[3,3] - 9
+
+print("--------------")
+
+sum(A)
+mean(A)
+colSums(A)
+colMeans(A)
+
+```
+
+
+## Apply
+
+```{r}
+
+apply (A ,1, mean) # 1 for row
+
+apply (A ,2, max) # 2 for column
+
+apply (A ,2, function(x) mean(x))
+
+```
+
+
+## Linear Algebra 
+
+
+```{r}
+B<- matrix(1:9,3,3)
+
+B
+
+diag(B) # kosegen elemanlari
+
+sum(diag(A)) # iz
+
+I<- diag(c(1,1,1)) # birim matris
+
+matrix(c(2,1,3,1,2,1,3,1,0),3,3) # simetrik matris
+
+t(B) # transpozu
+
+det(matrix(c(0,1,1,1), nrow=2)) # determinant : kosegen elemanlarinin carpilip birbirinden cikartilmasi
+
+# MATRIX MULTIPLICATION
+
+A %*% A
+
+A*A
+
+solve(matrix(c(3,4,5,8),2,2)) # Matrisin tersini alma
+
+
+```
+
+# 5. Applied Regression 
+
+y = B0 + B1X1 + ....+ BnXn
+
+B = [X'X]^-1 X'y
+```{r}
+
+# library(readr)
+# hsb<- read.table("hsb.txt") # we used import dataset in environment.
+
+head(hsb)
+
+hsb<- na.omit(hsb) # this function deletes the rows if detect any null.
+
+# Create Dependent Variable
+
+y<- matrix(hsb$write, ncol=1) 
+
+# Create Independent variable
+
+x<- as.matrix(c(1, hsb$math, hsb$science, hsb$socst, hsb$female))
+
+# Apply model to Linear Regression
+
+summary(lm(write ~ math + science + socst + female, hsb))
+
+# Let's calculate Linear Reg manually
+
+x1<- as.matrix(cbind(1, hsb$math, hsb$science, hsb$socst, hsb$female))
+
+n<- nrow(x1)
+p<- ncol(x1)
+
+
+# B = [X'X]^-1 X'y  same as below
+
+solve(t(x1) %*% x1) %*% t(x1) %*% y
+
+```
+
+
+
+
+

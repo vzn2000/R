@@ -1,0 +1,654 @@
+---
+title: "Visualization_ggplot2.Rmd"
+author: "Vedat Ozkan"
+date: "December 19, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+Resources:
+
+http://r4ds.had.co.nz
+https://github.com/jtleek
+
+
+```{r}
+
+# Overview
+
+
+library(tibble)
+library(dplyr)
+library(ggplot2)
+
+
+df<- tibble(
+  use = factor(c("wd","we"),levels = c("wd","we")),
+  duration = c(100,180)
+)
+
+
+a<- ggplot(df, aes(x = use, y = duration)) +
+  geom_bar(stat = "identity")
+
+a+geom_bar(stat = "identity")
+
+
+a + geom_bar(colour = "black",
+             fill = "orange",
+             stat = "identity"
+           ) +
+  guides(fill = FALSE) +
+  xlab("Wekdays - Weekend") +
+  ylab("Usage Duration") +
+  ggtitle("Phone Usage Statistics")
+  
+# Note: Below provides to see the last error
+
+library(rlang)
+last_error()
+
+```
+
+
+# 1. Univariant Visualization
+
+
+## 1.1. Discrete Variable
+
+In order to visualize Discrete Variable is needed to visualize, you should do it by:
+
+a) by frequency
+b) by its absolute value
+
+```{r}
+
+df<- tibble(
+  use = c(rep("wd", 20), rep("we", 10))
+)
+
+df1<- tibble(
+  use = factor(c("wd","we"),levels = c("wd","we")),
+  duration = c(100,180)
+)
+
+```
+
+
+### Bar Graph: geom_bar()
+
+```{r}
+
+# for df
+
+ggplot(df,aes(use)) +
+  geom_bar()
+
+# for df1
+
+ggplot(df1, aes(x = use, y = duration)) +
+  geom_bar(stat = "identity")
+
+
+```
+
+
+
+### Line Graph: geom_line()
+
+```{r}
+
+df <- tibble(
+  use = factor(c("wd","we"),levels = c("wd","we")),
+  duration = c(100,180)
+)
+
+
+ggplot(df, aes(x=use, y = duration, group = 1))+
+  geom_line() 
+
+# let's add geom_point() function
+
+ggplot(df, aes(x=use, y = duration, group = 1))+
+  geom_line() +
+  geom_point()
+
+# let's add a few more feature
+
+ggplot(df, aes(x=use, y = duration, group = 1))+
+  geom_line(color = "red", linetype = "dashed", shape =1.6) +
+  geom_point(color = "red", size = 4, shape = 21, fill = "blue")+
+  expand_limits(y = 0)
+
+```
+
+
+
+### Pie Graph
+
+```{r}
+
+
+
+
+
+
+
+
+```
+
+
+
+
+## 1.2. Continuous Variable
+
+
+```{r}
+
+df<- tibble(
+  
+  gender = factor(rep(c("M","F"), each = 500)),
+  duration = c(rnorm(500, mean = 80), rnorm(500, mean = 81))
+)
+
+df
+
+```
+
+
+### Histogram: geom_histogram
+
+```{r}
+
+ggplot(df, aes(duration)) +
+  geom_histogram()
+
+
+
+ggplot(df, aes(duration)) +
+  geom_histogram(binwidth = .5, 
+                 color ="black", 
+                 fill = "orange") +
+  xlab("Duration Distribution") +
+  ylab("Frequency") + 
+  ggtitle("Histogram")
+
+
+```
+
+
+Density Graph: geom_density()
+
+```{r}
+
+  ggplot(df, aes(duration)) +
+  geom_density()
+  
+# ----------
+  
+  ggplot(df, aes(duration)) +
+  geom_histogram(aes(y = ..density..), 
+                 binwidth = .5, 
+                 color ="black",
+                 fill = "orange") +
+  geom_density()
+
+# -------------
+
+ggplot(df, aes(duration)) +
+  geom_histogram(aes(y = ..density..), 
+                 binwidth = .5, 
+                 color ="black",
+                 fill = "orange") +
+  geom_density(alpha = .3,
+               fill = "black")
+
+
+```
+
+
+```{r}
+
+# How to add GENDER dimension to Histogram 
+
+ggplot(df, aes(duration, fill = gender)) +
+  geom_histogram(binwidth = .5, 
+                 alpha = .5,
+                 position = "identity"
+                )
+
+
+# How to add GENDER dimension to Density
+
+ggplot(df, aes(duration, fill = gender)) +
+  geom_density( binwidth = .5, 
+                alpha = .5,
+                position = "identity"
+                
+                )
+
+
+```
+
+
+facet_grid()
+
+It provides to divide data into 2 more dimensions
+```{r}
+# How to display dimensions in 2 different graph
+
+
+ggplot(df, aes(duration)) +
+  geom_histogram(binwidth = .5, 
+                 color = "black",
+                 fill = "orange") +
+  facet_grid(gender ~ .)
+
+# facet_grid() above ensures to display 2 histogram by male and female separately
+
+```
+
+
+
+### Box Plot: geom_boxplot()
+
+```{r}
+
+ggplot(df, aes(x = gender, y = duration)) +
+  geom_boxplot()
+
+# Let's fill the baxes with  different color
+
+ggplot(df, aes(x = gender, y = duration, fill = gender)) +
+  geom_boxplot()
+
+# Let's remove autometed explanation in visualization
+
+ggplot(df, aes(x = gender, y = duration, fill = gender)) +
+  geom_boxplot() +
+  guides(fill = FALSE)
+
+
+# Let's change the direction of axis
+
+ggplot(df, aes(x = gender, y = duration, fill = gender)) +
+  geom_boxplot() +
+  guides(fill = FALSE) +
+  coord_flip()
+
+
+```
+
+
+
+### Area Graph: geom_area()
+
+```{r}
+
+ggplot(df, aes(duration))+
+  geom_area(stat = "bin")
+
+```
+
+
+
+### Frequency Graph: geom_preqpoly()
+
+```{r}
+
+ ggplot(df, aes(duration)) +
+  geom_freqpoly()
+
+```
+
+
+
+### Dotplot Graph: geom_dotplot()
+
+```{r}
+
+ggplot(df, aes(duration)) +
+  geom_dotplot(binwidth = 0.1)
+
+```
+
+
+# 2.Bivariate Visualization
+
+
+## 2.1. Continuous X, Continuous Y
+
+
+
+```{r}
+# The amount of time women and men spend on the internet and mobile
+
+df<- tibble(
+  gender = factor(rep(c("M","F"), each = 500)),
+  mobile = c(rnorm(500, mean = 80), rnorm(500, mean = 82)),
+  web    = c(rnorm(500, mean = 82), rnorm(500, mean = 81))
+)
+
+df
+
+```
+
+
+
+### Scatter-plot
+
+```{r}
+
+ggplot(df,aes(mobile, web)) +
+  geom_point()
+
+# -------- let's add linear regression line ---
+
+ggplot(df,aes(mobile, web)) +
+  geom_point() +
+  geom_smooth(method = lm)
+
+# -------let's remove confidence interval in visualization---
+
+ggplot(df, aes(mobile, web)) +
+  geom_point() +
+  geom_smooth(method = lm, se = FALSE)
+
+# ----- if we want to see non-linear regression line ---
+
+ggplot(df, aes(mobile, web)) +
+  geom_point() +
+  geom_smooth()
+
+# ----- let's do another thing, let's display Male and Female observations in the graph ----
+
+ggplot(df,aes(mobile, web, color = gender)) +
+  geom_point()
+
+# ---- Now, let's think of linear regression lines for  Male and female seperately ---
+
+ggplot(df,aes(mobile, web, color = gender)) +
+  geom_point() +
+  geom_smooth(method = lm)
+
+```
+
+
+## 2.2. Discrete X, COntinuous Y
+
+```{r}
+
+df<- tibble(
+  use = factor(c("wd","we"), levels = c("wd","we")),
+  duration = c(100, 180)
+)
+
+df
+
+```
+
+
+
+### Bar Graph: geom_bar()
+
+
+```{r}
+
+ggplot(df,aes(use, duration, fill = use)) +
+  geom_bar(color =  "black", 
+           fill = "orange", 
+           stat = "identity")
+
+```
+
+
+
+### Box Plot: geom_boxplot()
+
+```{r}
+
+
+df<- tibble(
+  
+  gender = factor(rep(c("M","F"), each = 500)),
+  duration = c(rnorm(500, mean = 80), rnorm(500, mean = 81))
+)
+
+
+ggplot(df, aes(x=gender, y=duration, fill = gender))+
+  geom_boxplot()
+
+```
+
+
+
+### Dot Plot: geom_dotplot()
+
+```{r}
+
+ggplot(df, aes(x=gender, y=duration, fill = gender))+
+  geom_dotplot(binaxis = "y",
+               stackdir = "center",
+               binwidth = 0.1
+               )
+
+```
+
+
+
+### Violin Graph: geom_violin()
+
+```{r}
+
+ggplot(df, aes(x=gender, y=duration, fill=gender))+ 
+  geom_violin(scale = "area")
+
+```
+
+
+
+## 2.3. Discrete X, Discrete Y
+
+```{r}
+
+df<- tibble(
+  use = factor(c("wd","we","wd","we"), levels=c("wd","we")),
+  duration = c(100,180,90,200),
+  gender = factor(c("M","M","K","K"))
+  
+  )
+
+df
+
+```
+
+
+
+### geom_count()
+
+```{r}
+
+ggplot(df, aes(use,gender)) +
+  geom_count()
+
+```
+
+
+
+# 3. Graph Split
+
+```{r}
+
+df<- tibble(
+  gender = factor(rep(c("M","F"), each=600)),
+  mobile = c(rnorm(600, mean = 80), rnorm(600, mean = 82)),
+  web = c(rnorm(600, mean = 82), rnorm(600, mean = 81)),
+  job = factor(rep(c("A","B","C"), each = 400))
+)
+
+df
+
+t<- ggplot(df, aes(mobile, web)) + geom_point()
+
+t
+
+# Let's split data by gender data vertically
+
+t + facet_grid(. ~ gender)
+
+
+# Let's split data by gender data horizontally
+
+t + facet_grid(gender ~ .)
+
+
+# Let's split data by gender and job data
+
+t + facet_grid(job ~ gender) +
+  
+  geom_smooth(method = lm)
+
+```
+
+
+
+# 4. Time Series Visualization
+
+```{r}
+
+head(economics)
+
+
+d<- economics
+
+ggplot(d, aes(date, pop)) +
+  geom_line()
+
+
+# How to get subset of time date and visualize
+
+s<- d %>% filter(date > as.Date("2010-1-1"))
+
+ggplot(s, aes(date, pop)) +
+  geom_line()
+
+
+# How to add a dimension to time series. (Let's display unemployement as a dimension in timeline )
+ggplot(d, aes(date, pop)) +
+  geom_line(aes(size = unemploy/pop))
+
+
+```
+
+
+
+# 5. Multivariate Time Series Visualization
+
+```{r}
+
+library(tidyr)
+
+df<- economics %>%
+  select(date, psavert, uempmed) %>%
+  gather(key = "variable", value = "value", -date)
+
+
+head(df,3)
+
+#------ geom_line()
+
+ggplot(df, aes(date, value)) +
+  geom_line(aes(color = variable), size =1)
+
+
+#------geom_area()
+
+ggplot(df, aes(date, value)) +
+  geom_area(aes(color = variable, fill = variable),
+            alpha = 0.5,
+            position = position_dodge(.8),
+            size =1)
+
+
+
+  
+```
+
+
+
+# 6. Data Mining with Data Visualization
+
+Below we will use Diamonds dataset to make data analysis and explore features in dataset.
+```{r}
+
+# Let's understand data
+
+d<-diamonds
+
+
+summary(d)
+
+
+str(d)
+
+# We see that price can be the most important variable that we wil benefit from
+
+```
+
+
+```{r}
+# Let's see the price distribution of products
+
+
+ggplot(d, aes(price)) +
+  geom_histogram(bidwth = .5)
+
+
+# Let's see the avg price by color and clarity separately
+
+d %>%
+  group_by(color) %>%
+  summarise(n = n(), mean(price))
+
+
+d %>%
+  group_by(clarity) %>%
+  summarise(n = n(), mean(price))
+
+
+
+```
+
+
+Let's continue to explore by color
+```{r}
+# Let's visualize color-price correlation
+# (Note: it is discrete data)
+
+k<- d %>%
+      group_by(color) %>%
+      summarise(n = n(), avg_price = mean(price))
+
+
+ggplot(k, aes(color, avg_price)) +
+  geom_bar(stat = "identity",
+           color = "black",
+           fill = "orange")
+
+```
+
+
+```{r}
+# Let's see the price distribution by color distribution
+
+ggplot(d, aes(price, fill =color)) +
+  geom_density(alpha = .5)
+
+
+str(d) # let's go over related data with the visualization together to interpret.
+
+
+
+```
+

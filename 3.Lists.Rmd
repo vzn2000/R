@@ -1,0 +1,135 @@
+---
+title: "3.Lists"
+author: "Vedat Ozkan"
+date: "December 3, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# 1. What is List?
+
+# 2. List formating
+
+## Create Liste
+
+```{r}
+list("SuperNova","Universe",1:10, 57, 12.45, FALSE)
+
+```
+
+## Combine Lists
+
+```{r}
+
+list_1<- list("SuperNova","Universe",1:10, 57, 12.45, FALSE)
+
+list_2<- list("Star","Planet",15:20)
+
+c(list_1, list_2)
+
+```
+
+## List Naming
+
+```{r}
+
+liste<- list(c("Ali","go","school"),
+     matrix(1:9, 3,3),
+     list("John",1:10)
+     )
+
+liste
+
+names(liste)<- c("inovative", "matrix", "mixed")
+```
+
+
+# 3. List Component Operation
+
+## List Index and Element Selection
+
+```{r}
+
+
+liste[1]
+
+liste$matrix
+
+```
+
+
+## List Component Change
+
+```{r}
+# Add companent to the list
+
+liste[4]<- "This is new component!"
+
+liste
+
+# delete component
+
+liste[4]<- NULL
+
+liste
+
+```
+
+
+## Convert List into Vector
+
+```{r}
+
+la<- list(1:15)
+
+typeof(la)
+is.vector(la)
+
+lb<- list(10:19)
+
+a<- unlist(la)
+
+typeof(a)
+is.vector(a)
+
+```
+
+
+# 4. List Calculations
+
+```{r}
+
+la*2 # It gives error b/c it has to make it unlist as below
+
+unlist(la)*2
+
+liste$matrix*2 # let's try for liste example. It worked!
+
+tolower(liste$inovative) # let's convert string to lower case
+
+toupper(liste$inovative) # let's convert string to UPPER case
+
+```
+
+
+# 5. Apply function in lists
+
+```{r}
+
+# lapply for lists whereas apply in matrices
+
+l<- list(one= 1:10, square= (1:10)^2, cube= (1:10)^3)
+
+# lapply(list, function)
+
+lapply(l, mean)
+
+lapply(l, sum)
+
+lapply(l, function(x) x^4)
+
+lapply(c(1,2,3), function(x) matrix(rnorm(9),3,3))
+
+```
+

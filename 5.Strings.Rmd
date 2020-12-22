@@ -1,0 +1,320 @@
+---
+title: "5.Strings"
+author: "Vedat Ozkan"
+date: "December 14, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Work with Strings in R
+
+
+# 1.Create a String
+
+
+## Empty Character
+
+
+```{r}
+
+empty_str<- ""
+class(empty_str)
+
+empty_sample<- character(0)
+class(empty_sample)
+
+str(empty_sample)
+
+
+empty_sample[1]<- "this is first value!"
+
+empty_sample[2]<- "this is second value!"
+
+empty_sample
+
+is.character(empty_sample)
+
+as.character(9)
+
+```
+
+
+## paste() and the others
+
+```{r}
+
+# paste()
+
+metin<- "this is a char!"
+
+metin
+
+
+karakter<- "so it is!"
+
+
+c("character")
+
+
+paste(metin, karakter)
+
+paste(metin, karakter, sep = "---")
+
+paste(metin, karakter, sep = "")
+
+
+paste("1234143")
+
+# print()
+
+print("Ali gel.")
+
+
+print("Ali gel", quote = FALSE) # returns with no quote
+
+
+# noqoute()
+
+noquote("Ali gel.")
+
+# cat()
+
+cat("Ali gel.") # cat resurns with no accepting it as a vector
+
+
+# toString()
+
+
+toString(99) # it converts values into string type
+
+a<- toString(c("sdfs", 99, TRUE, NA, sum(1:19)))
+
+a
+```
+
+
+
+# 2. Basic String Operations
+
+```{r}
+
+
+# nchar() length()
+
+nchar("John Smith")
+
+nchar( c("John", "Smith", "Ali"))
+
+length(c("John", "Smith", "Ali"))
+
+
+
+# upper lower cases
+
+tolower("THIS A CAR.")
+
+toupper("this is a car.")
+
+
+
+# chartr
+
+chartr("l", "v", " laleliden bir gul aldim")
+
+
+# abbreviate()
+
+colors()
+
+c<- colors()[1:6]
+
+abbreviate(c)
+
+abbreviate(c, minlength = 5)
+
+
+# substr
+
+substr("mustafa", 2,5)
+
+
+x<- c("one", "two", "three")
+substr(x, 2, 2)<- "$"
+x
+
+
+# grep()
+
+v<- c("bir","berber","bir","berbere","gelme","burasi","bana","ancak","yeter")
+
+grep("er", v)
+
+
+# sub()
+
+sub("bir","iki",v)
+
+
+```
+
+
+
+# 3. Vectoral Operations (Set Operators)
+
+
+```{r}
+
+company_a <- c("R","sql","Python","SPSS","SAS")
+
+company_b <- c("sql","R","Python","SPSS","Excel")
+
+company_c <- c("R","sql","Python","SAS","SPSS")
+
+
+# union()
+
+union(company_a, company_b)
+
+union(company_b, company_a)
+
+
+# intersect()
+
+intersect(company_a, company_b)
+
+intersect(company_b, company_a)
+
+
+# setdiff()
+
+setdiff(company_a, company_b)
+
+setdiff(company_b, company_a)
+
+
+# setequal()
+
+setequal(company_a, company_b)
+
+setequal(company_a, company_c)
+
+# identical()
+
+## it is similar as setequal(), but sort will be included for TRUE/FALSE
+
+identical(a,c)
+
+identical(a,a)
+
+
+
+```
+
+
+
+4. Work with strings with stringr
+
+```{r}
+library(stringr)
+
+v<- c("bir","berber","bir","berbere","gelme","burasi","bana","ancak","yeter")
+
+str_detect(v, "bir")
+
+str_which(v, "bir")
+
+
+v<- c("bir bir bir","berber","bir","berbere","gelme","burasi","bana","ancak","yeter")
+
+str_count(v,"bir")
+
+str_locate(v, "bir")
+
+str_locate_all(v, "bir")
+
+```
+
+
+
+## str_sub(): substring
+
+```{r}
+
+str_sub(v, 1,3)
+
+s<- c("buyukveri","makineogrenmesiveveri", "istatistikveri", "borcamveri")
+
+str_sub(s, -4, -1) # substring() doesn't run here!
+
+```
+
+
+
+## str_length()
+
+```{r}
+
+
+nchar(v)
+
+str_length(v)
+
+#------
+
+a_b<- factor(c(1,1,1,0,0,0), labels = c("firstfactor", "secondfactor"))
+
+a_b
+
+str_length(a_b) # nchar() doesn't run here!
+
+nchar(a_b)
+
+
+```
+
+
+## str_replace()
+
+```{r}
+
+v<- c("bir bir bir","berber","bir","berbere","gelme","burasi","bana","ancak","yeter")
+
+str_replace(v, "bir", "--")
+
+str_replace_all(v, "bir", "--")
+
+
+str_to_lower("Ali Gel")
+
+str_to_upper("Ali Gel")
+
+```
+
+
+# str_c() combination
+
+```{r}
+
+str_c("ali","ata","bakmayi","birak")
+
+str_c("ali","ata","bakmayi","birak", sep =" ")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

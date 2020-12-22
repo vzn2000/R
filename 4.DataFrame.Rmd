@@ -1,0 +1,476 @@
+---
+title: "DataFrame"
+author: "Vedat Ozkan"
+date: "December 4, 2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# 1. What is DataFrame?
+
+
+# 2. DataFrame Formating
+
+## Create DataFrame
+
+```{r}
+
+df<- data.frame(
+  
+  store_id = c (1:5),
+  region = c("Mecidiyekoy","besikTas","kadikoy","Bagcilar","Gop"),
+  avg_profit = c(60,50,61,72,89),
+  stringsAsFactors = FALSE
+  
+  )
+
+df
+
+str(df)
+
+summary(df)
+
+nrow(df)
+
+ncol(df)
+
+dim(df)
+
+```
+
+## Combine DataFrame 
+
+```{r}
+
+df2<- data.frame(
+  
+  store_id = c(1:5),
+  past = c(2,4,5,3,6),
+  emp_count = c(23,43,21,11,15)
+  
+)
+
+# joins
+merge(df,df2,by = "store_id")
+
+
+cbind(df, df2)
+
+
+
+```
+
+
+## Add / Delete Variable
+
+```{r df_all}
+
+df_all<- merge(df, df2, by = "store_id")
+
+df_all
+
+df_all$avg_cust<- c(12,34,21,12,45)
+
+df_all$product_name<- c("shoe","bag","skirt","tshirt","jacket")
+
+df_all
+
+## how to delete variable
+
+df_all$city<- c("Arlington", "Fairfax", "Chantilly","DC","McLean")
+
+df_all$city<- NULL
+
+df_all
+
+## how to do feature engineering
+
+df_all$profit_by_emp<- df_all$avg_profit/df_all$emp_count
+
+df_all
+
+```
+
+## Add / Delete Row
+
+```{r}
+
+df
+
+rbind(df, c(6,"Beyoglu",99)) # add
+
+df<- df[-6] # delete, or df<-df[1:5]
+
+```
+
+
+## Dataframe Naming
+
+```{r}
+
+colnames(df)<- c("n","s","k")
+
+rownames(df)<- c("one","two","three","four","five")
+
+df
+
+# Now, let's make lower case 
+
+df$s<- tolower(df$s)
+
+#let's get only n and k columns / or remove s column
+
+df<- df[,c("n","k")]
+
+df
+
+# How to assign columnnames to rownames
+
+
+library(dplyr) # needed for %>% <==This sign called "Chain Operator"
+
+library(tibble) # needed for remove_rownames
+
+df_all<- df_all %>% remove_rownames %>% column_to_rownames (var="region")
+
+
+# %>% kendinden onceki girdiyi kendinden sonraki cikti olarak atar
+
+```
+
+
+## Convert Lists / Matrices into Dataframe
+
+```{r}
+
+m<- matrix(1:9, 3,3)
+
+df<-as.data.frame(m)
+
+is.matrix(df)
+
+is.data.frame(df)
+
+#-------------
+
+num<- c(1,2,3)
+letter<- c("a","b","c")
+log<- c(TRUE,FALSE,TRUE)
+
+liste<- list(num, letter, log)
+
+df1<-as.data.frame(liste)
+
+```
+
+
+## Convert Data Types in dataframe
+
+```{r}
+
+str(df_all)
+
+df_all$product_name<- factor(df_all$product_name)
+
+# note: if we need to get a variable as categorical we must convert it into factor
+
+# Also let's define if the categorical data is ordinal or nominal
+
+df_all$product_name<- factor(df_all$product_name, ordered = TRUE)
+
+df_all$avg_cust <- as.integer(df_all$avg_cust) 
+
+
+```
+
+
+# 3.DataFrame Component Operations
+
+
+
+## Dataframe Variable Selection
+```{r}
+library(ggplot2)
+
+mpg
+
+summary(mpg)
+
+str(mpg)
+
+
+mpg$model
+
+attach(mpg) # you can directly tour in mpg without writing mpg$ each time, however, it can cause comfusing. Not recommended to use!
+
+model
+
+detach(mpg) # retrieves attach() function
+
+# how to select more than one variable
+
+data.frame(mpg$manufacturer, mpg$model)
+
+head(data.frame(mpg$manufacturer, mpg$model)) # let's see first 6 rows.
+
+```
+
+
+## Dataframe Index and Element Selection
+
+```{r}
+
+mpg[1:10]
+
+mpg[1,1]
+
+mpg[1:10,1 ]
+
+mpg[mpg$manufacturer == "audi" & mpg$cyl == "6" , ]
+
+mpg[mpg$manufacturer == "audi" & mpg$cyl == "6" & mpg$year > 1999, c("model", "drv")]
+
+```
+
+
+## Dataframe Element Change
+
+same operations with lists
+
+```{r}
+
+
+
+```
+
+
+## Dataframe Sorting
+
+```{r}
+
+df_all[order(df_all$past, decreasing = TRUE),]
+
+
+
+```
+
+
+# 4. DataFrame Evaluation
+
+
+```{r}
+
+df_all$avg_profit*10 # we already learned it.
+
+
+```
+
+
+# 5. Apply Family
+
+## apply()
+
+```{r}
+
+apply(matrix(1:9,3,3), 1, mean)
+
+
+fap<- mpg[, c("displ","cyl","cty")]
+
+fap
+
+apply(fap, 1, sum)
+
+apply(fap, 2, sum)
+```
+
+
+```{r}
+
+sum(mpg$displ)
+
+sum(mpg$cyl)
+
+sum(fap[1,])
+
+```
+
+
+```{r}
+# This is functional language, so we don't like use for-loop in R. We prefer apply() function
+
+bos<- NULL
+
+for (i in 1:nrow(fap)) {
+  
+  a<- sum(fap[i,])
+  bos<- rbind(bos, a)
+}
+
+
+source("for.R")
+
+```
+
+
+```{r}
+# R daki kod ve donguleri karsilastirmak ve test etmek icin asagidaki fonksiyonb kullanilir.
+
+# ozellikle buyuk projelerde
+
+microbenchmark(source("for.R"), apply(fap, 1, sum))
+
+# YUKARIDAKI ISLEMI YAPMAMIZIN NEDENI DONGULERLE AYNI ISI YAPAN APPLY() FONKSIYONUNUN PERFORMANSINI KIYASLAMAK.
+#APPLY() fonksiyonununayni isi yapan dongulerden cok daha yuksek performansa saahip oldugunu gorebiliriz
+
+```
+
+## lapply()
+
+l letter stands for list
+```{r}
+
+
+l<- list( a = rnorm(90),
+          b = rbeta(10,1,2),
+          c = 1:5000
+        )
+
+lapply(l, mean)
+
+```
+
+## sapply()
+
+s letter stands for simple. sapply() converts list into vectors
+
+```{r}
+
+l<- list( a = rnorm(90),
+          b = rbeta(10,1,2),
+          c = 1:5000
+        )
+
+sapply(l, mean)
+
+```
+
+
+## vapply()
+
+```{r}
+
+vapply(l, mean, double(1))
+
+```
+
+
+## tapply()
+
+ensures for categorical variables to describe data / to factorize
+
+```{r}
+
+str(mpg)
+
+tapply(mpg$cyl, mpg$class, mean)
+
+```
+
+
+## by()
+
+ensures more detail in factorize
+
+```{r}
+
+by(mpg[,c("displ", "cty","hwy")], mpg$cyl, colMeans)
+
+```
+
+
+
+# 6.Map Family
+
+```{r}
+
+library(purrr)
+
+mapp<- mpg[,c("displ", "cty","hwy")]
+
+map_dbl(mapp, mean)
+
+```
+
+
+```{r}
+
+library(dplyr)
+
+mtcars %>%
+  split(.$cyl) %>%
+  map(~ lm(mpg ~ wt, data = .)) %>%
+  map(summary) %>%
+  map_dbl("r.squared")
+  
+
+```
+
+
+
+# 7. Modern Dataframe: Tibble
+
+
+
+## First difference: Type style
+
+
+```{r}
+
+data.frame(
+  
+  a = 1:10000,
+  b = 1:10000
+)
+
+
+tibble(
+  
+  a = 1:10000,
+  b = 1:10000
+)
+
+iris # iris is a sample dataset
+
+as_tibble(iris)
+```
+
+
+## Second difference: Subcluster Operations
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
